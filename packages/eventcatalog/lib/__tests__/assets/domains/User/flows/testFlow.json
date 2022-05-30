@@ -1,0 +1,39 @@
+{
+    "title": "Order Flow",
+    "edges": [
+        {
+            "from": "OrderRequested",
+            "to": ["B"] 
+        },
+        {
+            "from": "B",
+            "to": ["C", "D", "J"],
+            "constraint": "OR" 
+        },
+        {
+            "from": "C",
+            "to": null 
+        },
+        {
+            "from": "D",
+            "to": ["E", "F"],
+            "constraint": "AND" 
+        },
+        {
+            "from": "J",
+            "to": "B" 
+        },
+        {
+            "from": "E",
+            "to": "G" 
+        },
+        {
+            "from": "G",
+            "to": "H" 
+        },
+        {
+            "from": "OrderConfirmed",
+            "to": "OrderComplete" 
+        }
+    ]
+}

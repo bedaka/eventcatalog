@@ -1,0 +1,22 @@
+{
+    "title": "Order Flow2",
+    "edges": {
+        "direct": {
+            "OrderRequested": "B",
+            "J": "B",
+            "E": "G",
+            "G": "OrderConfirmed",
+            "OrderConfirmed": "OrderComplete" 
+        },
+        "or": {
+            "B": {
+            "or": ["C", "D", "J"]
+            }
+        },
+        "and": { 
+            "D": {
+            "and": ["E", "F"]
+            }
+        }
+    }
+}

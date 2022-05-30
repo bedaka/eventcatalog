@@ -61,3 +61,22 @@ export const getLastModifiedDateOfFile = (filePath) => {
   const lastModifiedDate = new Date(stats.mtime);
   return `${lastModifiedDate.getFullYear()}/${lastModifiedDate.getMonth() + 1}/${lastModifiedDate.getDate()}`;
 };
+
+export const getFlowsFromDir = (pathToFlowDir: string) => {
+  try {
+    let files: string[] = [];
+    fs.readdirSync(pathToFlowDir).forEach(fileName => {
+      // See if any flows are in there, by searching for json files
+      if (fileName.includes('.json')) {
+        files.push(fileName);
+      }
+    });
+    if (files.length == 0) throw new Error('No flows found');
+
+    const flowFiles = files.map(file => fs.readFileSync(path.join(pathToFlowDir, file), 'utf-8'));
+
+    return flowFiles;
+  } catch (error) {
+    return null;
+  }
+};

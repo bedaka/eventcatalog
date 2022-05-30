@@ -11,13 +11,13 @@ const generateLink = (value, type, domain?) => {
 };
 
 /**
- * Build Mermaid graph output
+ * Build Mermaid Producer/ Consumer graph output
  * @param centerNode
  * @param leftNodes
  * @param rightNodes
  * @param rootNodeColor
  */
-const buildMermaid = (centerNode, leftNodes, rightNodes, rootNodeColor) => `flowchart LR\n
+const buildSimpleFlowMermaid = (centerNode, leftNodes, rightNodes, rootNodeColor) => `flowchart LR\n
 ${leftNodes.map((node) => `l-${node.id}[${node.name}]:::producer-->${centerNode.id}[${centerNode.name}]:::event\n`).join('')}
 classDef event stroke:${rootNodeColor},stroke-width: 4px;\n
 classDef producer stroke:#75d7b6,stroke-width: 2px;\n
@@ -27,6 +27,14 @@ ${leftNodes.map((node) => `click l-${node.id} href "${node.link}" "Go to ${node.
 ${rightNodes.map((node) => `click r-${node.id} href "${node.link}" "Go to ${node.name}" _self\n`).join('')}
 click ${centerNode.id} href "${centerNode.link}" "Go to ${centerNode.name}" _self\n
 `;
+
+const buildMermaid = (edges, rootNodeColor) => {
+  flowchart = 'flowchart LR\n'
+  for e in edges {
+    flowchart + `${e.map((edge) => `l-${edge.in.id}[${edge.in.name}]-->${edge.out.id}[${edge.out.name}]\n`).join('')}`
+    
+  }
+}
 
 /**
  * Builds a graph for a given event
@@ -55,7 +63,7 @@ export const buildMermaidFlowChartForEvent = (
     link: generateLink(eventName, 'events', domain),
   };
 
-  return buildMermaid(centerNode, leftNodes, rightNodes, rootNodeColor);
+  return buildSimpleFlowMermaid(centerNode, leftNodes, rightNodes, rootNodeColor);
 };
 
 /**
@@ -88,5 +96,5 @@ export const buildMermaidFlowChartForService = (
     name: serviceName,
     link: generateLink(serviceName, 'services', domain),
   };
-  return buildMermaid(centerNode, leftNodes, rightNodes, rootNodeColor);
+  return buildSimpleFlowMermaid(centerNode, leftNodes, rightNodes, rootNodeColor);
 };

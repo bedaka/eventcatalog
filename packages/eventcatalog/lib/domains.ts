@@ -77,6 +77,10 @@ export const getAllServicesFromDomains = () => {
   }, []);
 };
 
+// export const getAllFlowsFromDomains = () => {
+
+// }
+
 export const getDomainByName = async ({
   domainName,
 }: {
