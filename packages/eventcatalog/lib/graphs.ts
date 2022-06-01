@@ -28,13 +28,13 @@ ${rightNodes.map((node) => `click r-${node.id} href "${node.link}" "Go to ${node
 click ${centerNode.id} href "${centerNode.link}" "Go to ${centerNode.name}" _self\n
 `;
 
-const buildMermaid = (edges, rootNodeColor) => {
-  flowchart = 'flowchart LR\n'
-  for e in edges {
-    flowchart + `${e.map((edge) => `l-${edge.in.id}[${edge.in.name}]-->${edge.out.id}[${edge.out.name}]\n`).join('')}`
+// const buildMermaid = (edges, rootNodeColor) => {
+//   flowchart = 'flowchart LR\n'
+//   for e in edges {
+//     flowchart + `${e.map((edge) => `l-${edge.in.id}[${edge.in.name}]-->${edge.out.id}[${edge.out.name}]\n`).join('')}`
     
-  }
-}
+//   }
+// }
 
 /**
  * Builds a graph for a given event
