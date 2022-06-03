@@ -11,6 +11,10 @@ export class Node {
     this.edges.push(node);
   }
 
+  edgeExists(node): boolean {
+    return this.edges.some( dst => node.id == dst.id);
+  }
+
   // Return name with format brackets
   displayName(): string {
     return `[${this.id}]`;
@@ -62,10 +66,13 @@ export class Flow {
       if (gate) {
         let gateNode = this.nodes.get(GateNode.gateId(srcNode.id, gate));
         if (!gateNode) {
-          gateNode = new GateNode(srcNode.id, gate, 'gate');
+          gateNode = new GateNode(srcNode.id, gate, srcNode.service);
           this.nodes.set(gateNode.id, gateNode);
         }
-        srcNode.addEdge(gateNode);
+        // only add gate once to source node.
+        if (!srcNode.edgeExists(gateNode)){
+          srcNode.addEdge(gateNode);
+        }
         gateNode.addEdge(dstNode);
       } else {
         // if no gate add simple edge
@@ -82,7 +89,6 @@ export class Flow {
  */
 const readFlowData = (projectDir: string, domainName: string) => {
   const flows = getFlowsFromDir([projectDir, 'domains', domainName, 'flows'].join('/'));
-  console.log(flows);
   return flows;
 };
 
@@ -115,13 +121,13 @@ export const prepareFlow = (projectDir: string, domain: string) => {
  * @returns {string} FlowGraph in Markdown
  */
 export const buildFlowGraph = (flow: Flow): string => {
-  let flowGraph = `flowGraph LR\n`;
+  let flowGraph = `flowchart LR\n`;
+  let edges = '';
 
   // Iterate through Nodes and sort them into subgraphs (if they belong to a service) // aber kann ein event nicht von mehreren services produziert werden?
   const nodesPerService = new Map<string, Node[]>();
   flow.nodes.forEach((n) => {
     // check if subgraph
-    console.log(n.service);
     if (n.service !== '') {
       // check if subgraph exists
       if (!nodesPerService.has(n.service)) {
@@ -130,20 +136,18 @@ export const buildFlowGraph = (flow: Flow): string => {
         nodesPerService.get(n.service).push(n);
       }
     }
+    n.edges.forEach((dst) => {
+      //TODO: allow for text
+        edges += [n.id, ' --> ', dst.id, '\n'].join('');
+      });
   });
-  console.log(nodesPerService);
   nodesPerService.forEach((nodes, service) => {
     flowGraph += `subgraph ${service}\n`;
     nodes.forEach((node) => {
       flowGraph += [node.id, node.displayName(), '\n'].join('');
     });
-    // Iterate through Nodes
     flowGraph += 'end\n';
   });
-  flow.nodes.forEach((node, srcId) => {
-    const edges = node.edges.forEach((dst) => {
-      flowGraph += [srcId, ' --> ', dst.id, '\n'].join('');
-    });
-  });
-  return flowGraph;
+  
+  return flowGraph + edges;
 };
